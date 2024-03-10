@@ -4,7 +4,7 @@ import { type NeynarVariables, neynar } from 'frog/middlewares'
 import {createSafeChannel, findSafeChannel, addOwnerToSafeChannel} from '../backend/safeScheduler.js';
 import {getChannelFromNeynar} from "../utils/channel.js";
 import {getAddress} from "../utils/address.js";
-import {DOCUMENTATION_URL, ENABLE_VERIFIED_ADDRESS_CHECK} from '../config.js';
+import {DOCUMENTATION_URL} from '../config.js';
 import {getSafeChannelDataDetailsJSX} from './channelDetails.js'
 import {getErrorJSX} from './error.js';
 
@@ -81,7 +81,10 @@ app.frame('/check', async (c) => {
                     <TextInput placeholder={state.channel || "Enter your channel..."}/>,
                     <Button action="/check"> Check </Button>,
                     <Button.Reset> Home </Button.Reset>,
-                    <Button.Link href={DOCUMENTATION_URL}> Docs </Button.Link>
+                    <Button.Link href={DOCUMENTATION_URL}> Docs </Button.Link>,
+                    <Button.Link href={`https://sepolia.etherscan.io/address/${respCheck.safeChannel.address}#code`}>
+                        Explorer
+                    </Button.Link>
                 ]
             })
         }
@@ -132,7 +135,7 @@ app.frame('/join', async (c) => {
                 ]
             })
         }
-        if(ENABLE_VERIFIED_ADDRESS_CHECK && !successAddress){
+        if(!successAddress){
             return c.res({
                 image: getErrorJSX(
                     `You need a verified address in your profile`
@@ -156,7 +159,6 @@ app.frame('/join', async (c) => {
                     true
                 ),
                 intents:[
-                    <Button value="cast"> Cast </Button>,
                     <Button.Reset> Home </Button.Reset>,
                     <Button.Link href={DOCUMENTATION_URL}> Docs </Button.Link>
                 ]
@@ -218,14 +220,6 @@ app.frame('/create', async (c) => {
     })
     const channelName = frameData?.inputText || state.channel;
     let respCreate = undefined;
-    console.log('var: ', c.var)
-    // console.log('interactor: ', c.var.interactor)
-    // if( buttonValue == 'cast'){
-    //     const result = await c.var.(pictureSigner, "me irl", {
-    //         embeds: [{ url: memeUrl }],
-    //         replyTo: memesChannelUrl,
-    //     });
-    // }
     if(buttonValue && typeof channelName == 'string'){
         const {successAddress, address} = await getAddress(frameData?.fid || 0)
         const {successChannel} = await getChannelFromNeynar(channelName)
@@ -241,7 +235,7 @@ app.frame('/create', async (c) => {
                 ]
             })
         }
-        if(ENABLE_VERIFIED_ADDRESS_CHECK && !successAddress){
+        if(!successAddress){
             return c.res({
                 image: getErrorJSX(
                     `You need a verified address in your profile`
@@ -252,7 +246,10 @@ app.frame('/create', async (c) => {
                 ]
             })
         }
-        respCreate = await createSafeChannel(channelName, address || '', parseInt(buttonValue) * 60)
+        let deadline = parseInt(buttonValue) * 60;
+        if(deadline == 720)
+            deadline = 1
+        respCreate = await createSafeChannel(channelName, address || '', deadline)
         const respChannel = await findSafeChannel(channelName)
         if(respCreate.success){
             return c.res({
@@ -264,7 +261,6 @@ app.frame('/create', async (c) => {
                     respChannel.safeChannel.address,
                 ),
                 intents:[
-                    <Button value="cast"> Cast </Button>,
                     <Button.Reset> Home </Button.Reset>,
                     <Button.Link href={DOCUMENTATION_URL}> Docs </Button.Link>
                 ]
@@ -296,7 +292,7 @@ app.frame('/create', async (c) => {
         ),
         intents:[
             <TextInput placeholder={state.channel || "Enter your channel..."} />,
-            <Button value="12"> 12 hours </Button>,
+            <Button value="12"> 1 min </Button>,
             <Button value="24"> 24 hours </Button>,
             <Button value="48"> 48 hours </Button>,
             <Button value="72"> 72 hours </Button>

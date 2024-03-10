@@ -7,4 +7,3 @@ export const BACKEND_PUBLIC_URL = "https://palmera-farcaster-backed-f1ce767f6b77
 
 export const DOCUMENTATION_URL = "https://blog.palmeradao.xyz/palmera-safe-frame-18f4f40aa67b"
 
-export const ENABLE_VERIFIED_ADDRESS_CHECK = false

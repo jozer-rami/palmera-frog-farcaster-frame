@@ -21,6 +21,6 @@ export async function getAddress(fid: number): Promise<{ address: string | undef
     }
      return {
         address: ownerAddresses[0],
-        successAddress: false
+        successAddress: true
     };
 }
