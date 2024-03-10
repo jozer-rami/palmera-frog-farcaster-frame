@@ -123,7 +123,7 @@ app.frame('/join', async (c) => {
     if(typeof channelName == 'string'){
         const {successAddress,address} = await getAddress(frameData?.fid || 0)
         const {successChannel} = await getChannelFromNeynar(channelName)
-        // Not a real channel
+        // If not a real channel
         if(!successChannel){
             return c.res({
                 image: getErrorJSX(
@@ -135,6 +135,7 @@ app.frame('/join', async (c) => {
                 ]
             })
         }
+        // if no validated address
         if(!successAddress){
             return c.res({
                 image: getErrorJSX(
@@ -148,6 +149,7 @@ app.frame('/join', async (c) => {
         }
         respJoin = await addOwnerToSafeChannel(address || '', channelName)
         const respChannel = await findSafeChannel(channelName)
+        // if add owner was successful
         if(respJoin.success){
             return c.res({
                 image: getSafeChannelDataDetailsJSX(
@@ -164,7 +166,9 @@ app.frame('/join', async (c) => {
                 ]
             })
         }
+        //if it wasn't successful
         else {
+            // if the address was already in the safe
             if(respChannel.success){
                 return c.res({
                     image: getSafeChannelDataDetailsJSX(
@@ -184,6 +188,7 @@ app.frame('/join', async (c) => {
                     title: 'Join Safe for channel'
                 })
             }
+            // default is that the channel doesn't have a safe creation procees
             return c.res({
                 image: getErrorJSX(
                     `The Safe creation process for ${channelName} channel hasn't been started`
@@ -223,7 +228,7 @@ app.frame('/create', async (c) => {
     if(buttonValue && typeof channelName == 'string'){
         const {successAddress, address} = await getAddress(frameData?.fid || 0)
         const {successChannel} = await getChannelFromNeynar(channelName)
-        // Not a real channel
+        // if not a real channel
         if(!successChannel){
             return c.res({
                 image: getErrorJSX(
@@ -235,6 +240,7 @@ app.frame('/create', async (c) => {
                 ]
             })
         }
+        // if no valid addresss
         if(!successAddress){
             return c.res({
                 image: getErrorJSX(
@@ -251,6 +257,7 @@ app.frame('/create', async (c) => {
             deadline = 1
         respCreate = await createSafeChannel(channelName, address || '', deadline)
         const respChannel = await findSafeChannel(channelName)
+        //if creation was successful
         if(respCreate.success){
             return c.res({
                 image: getSafeChannelDataDetailsJSX(
@@ -266,6 +273,7 @@ app.frame('/create', async (c) => {
                 ]
             })
         }
+        //if creation was NOT successful
         else {
             return c.res({
                 image: getSafeChannelDataDetailsJSX(
