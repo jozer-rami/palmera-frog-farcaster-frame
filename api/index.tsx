@@ -49,7 +49,6 @@ app.frame('/check', async (c) => {
         if (frameData?.inputText) previousState.channel = frameData?.inputText;
     })
     const channelName = frameData?.inputText || state.channel;
-    let respCheck = undefined;
     if(typeof channelName == 'string'){
         const {successChannel} = await getChannelFromNeynar(channelName)
         // Not a real channel
@@ -119,7 +118,7 @@ app.frame('/join', async (c) => {
     const channelName = frameData?.inputText || state.channel;
     let respJoin = undefined;
     if(typeof channelName == 'string'){
-        const {successAddress,address} = await getAddress(frameData?.fid)
+        const {successAddress,address} = await getAddress(frameData?.fid || 0)
         const {successChannel} = await getChannelFromNeynar(channelName)
         // Not a real channel
         if(!successChannel){
@@ -133,7 +132,7 @@ app.frame('/join', async (c) => {
                 ]
             })
         }
-        if(DISABLE_VERIFIED_ADDRESS_CHECK || !successAddress){
+        if(ENABLE_VERIFIED_ADDRESS_CHECK && !successAddress){
             return c.res({
                 image: getErrorJSX(
                     `You need a verified address in your profile`
@@ -144,7 +143,7 @@ app.frame('/join', async (c) => {
                 ]
             })
         }
-        respJoin = await addOwnerToSafeChannel(address, channelName)
+        respJoin = await addOwnerToSafeChannel(address || '', channelName)
         const respChannel = await findSafeChannel(channelName)
         if(respJoin.success){
             return c.res({
@@ -212,10 +211,7 @@ app.frame('/join', async (c) => {
 app.frame('/create', async (c) => {
     const { buttonValue,
         frameData,
-        deriveState,
-        previousState,
-        displayName,
-        followerCount
+        deriveState
     } = c;
     const state = deriveState(previousState => {
         if (frameData?.inputText) previousState.channel = frameData?.inputText;
@@ -231,7 +227,7 @@ app.frame('/create', async (c) => {
     //     });
     // }
     if(buttonValue && typeof channelName == 'string'){
-        const {successAddress, address} = await getAddress(frameData?.fid)
+        const {successAddress, address} = await getAddress(frameData?.fid || 0)
         const {successChannel} = await getChannelFromNeynar(channelName)
         // Not a real channel
         if(!successChannel){
@@ -256,7 +252,7 @@ app.frame('/create', async (c) => {
                 ]
             })
         }
-        respCreate = await createSafeChannel(channelName, address, parseInt(buttonValue) * 60)
+        respCreate = await createSafeChannel(channelName, address || '', parseInt(buttonValue) * 60)
         const respChannel = await findSafeChannel(channelName)
         if(respCreate.success){
             return c.res({
@@ -300,7 +296,7 @@ app.frame('/create', async (c) => {
         ),
         intents:[
             <TextInput placeholder={state.channel || "Enter your channel..."} />,
-            <Button action="12"> 12 hours </Button>,
+            <Button value="12"> 12 hours </Button>,
             <Button value="24"> 24 hours </Button>,
             <Button value="48"> 48 hours </Button>,
             <Button value="72"> 72 hours </Button>
