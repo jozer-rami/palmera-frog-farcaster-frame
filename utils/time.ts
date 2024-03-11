@@ -9,13 +9,11 @@ export function getTimeUntilEvent(eventDate: Date): string {
     const minutes = duration.minutes();
     const seconds = duration.seconds();
     let str = ''
-    if(days>0){
+    if (days>0){
         str = `${days} days, ${hours} hours, ${minutes} minutes`
-    }
-    else if(hours>0){
+    } else if (hours>0){
         str = `${hours} hours, ${minutes} minutes`
-    }
-    else {
+    } else {
         str = `${minutes} minutes, ${seconds} seconds`
     }
     return str;

@@ -74,7 +74,7 @@ app.frame('/check', async (c) => {
                     respCheck.safeChannel.scheduledFor,
                     respCheck.safeChannel.status,
                     respCheck.safeChannel.owners.length,
-                    respCheck.safeChannel.address,
+                    respCheck.safeChannel.addresses,
                     true
                 ),
                 intents:[
@@ -157,7 +157,7 @@ app.frame('/join', async (c) => {
                     respChannel.safeChannel.scheduledFor,
                     respChannel.safeChannel.status,
                     respChannel.safeChannel.owners.length,
-                    respChannel.safeChannel.address,
+                    respChannel.safeChannel.addresses,
                     true
                 ),
                 intents:[
@@ -176,7 +176,7 @@ app.frame('/join', async (c) => {
                         respChannel.safeChannel.scheduledFor,
                         respChannel.safeChannel.status,
                         respChannel.safeChannel.owners.length,
-                        respChannel.safeChannel.address,
+                        respChannel.safeChannel.addresses,
                         true
                     ),
                     intents:[
@@ -265,7 +265,7 @@ app.frame('/create', async (c) => {
                     respChannel.safeChannel.scheduledFor,
                     respChannel.safeChannel.status,
                     respChannel.safeChannel.owners.length,
-                    respChannel.safeChannel.address,
+                    respChannel.safeChannel.addresses,
                 ),
                 intents:[
                     <Button.Reset> Home </Button.Reset>,
@@ -281,7 +281,7 @@ app.frame('/create', async (c) => {
                     respChannel.safeChannel.scheduledFor,
                     respChannel.safeChannel.status,
                     respChannel.safeChannel.owners.length,
-                    respChannel.safeChannel.address,
+                    respChannel.safeChannel.addresses,
                     true
                 ),
                 intents:[

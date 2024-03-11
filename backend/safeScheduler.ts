@@ -95,7 +95,7 @@ interface SafeChannel {
   createdAt: Date;
   scheduledFor: Date;
   status: string;
-  address: string;
+  addresses: Array<{address: string, chain_id: string}>;
   deployedAt: Date;
 }
 

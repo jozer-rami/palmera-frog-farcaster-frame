@@ -12,7 +12,6 @@ export  async function getChannelFromNeynar(channelName: string): Promise<{ chan
 
         };
     } catch {
-        console.log('Not a channel')
         return {
             channel: undefined,
             successChannel: false
