@@ -1,4 +1,4 @@
-import { BACKEND_PUBLIC_URL } from "../config.js";
+import { BACKEND_PUBLIC_URL } from "../config";
 
 interface GenerateResponse {
   image: string; // base64 encoded string

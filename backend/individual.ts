@@ -1,9 +1,8 @@
-import { BACKEND_PUBLIC_URL } from '../config.js';
+import { BACKEND_PUBLIC_URL } from '../config';
 
-export async function findSafeChannel(channelName: string): Promise<FindChannelResponse> {
+export async function findSafe(initialOwner: string): Promise<FindChannelResponse> {
     const baseUrl = `${BACKEND_PUBLIC_URL}`;
-    const url = `${baseUrl}/api/channel/${encodeURIComponent(channelName)}`;
-
+    const url = `${baseUrl}/api/individual/safe/${encodeURIComponent(initialOwner)}`;
     try {
         const response = await fetch(url, {
             method: 'GET', // This is optional for GET requests
@@ -11,14 +10,11 @@ export async function findSafeChannel(channelName: string): Promise<FindChannelR
                 'Content-Type': 'application/json',
             },
         });
-
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         const data: FindChannelResponse = await response.json();
         return data;
-
     } catch (error) {
         console.error('Error fetching channel data:', error);
         throw error;
@@ -26,8 +22,9 @@ export async function findSafeChannel(channelName: string): Promise<FindChannelR
 }
 
 
-export async function createSafeChannel(channel: string, owner: string, deadlineInMin: number): Promise<CreateChannelResponse> {
-  const url = `${BACKEND_PUBLIC_URL}/api/channel/create/safe`;
+export async function createSafe(initialOwner: string, addresses: string[], threshold: number): Promise<CreateChannelResponse> {
+  const url = `${BACKEND_PUBLIC_URL}/api/individual/create/safe`;
+  let addressesStr = addresses.join(',');
   try {
       const response = await fetch(url, {
           method: 'POST',
@@ -35,13 +32,14 @@ export async function createSafeChannel(channel: string, owner: string, deadline
               'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-              channel,
-              owner,
-              deadlineInMin,
+              initialOwner,
+              'addresses': addressesStr,
+              threshold,
           }),
       });
 
       if (!response.ok) {
+          console.log(response)
           throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -54,37 +52,9 @@ export async function createSafeChannel(channel: string, owner: string, deadline
   }
 }
 
-export async function findChannelDeadline() {
-  const response = await fetch(
-    `${BACKEND_PUBLIC_URL}/api/channel/frames/deadline`
-  );
-  const data = await response.json();
-  console.log(data);
-}
-
 interface FindChannelResponse {
   message: string;
   success: boolean;
-}
-
-export async function addOwnerToSafeChannel(owner: string, channel: string) : Promise<AddOwnerResponse>{
-  const response = await fetch(`${BACKEND_PUBLIC_URL}/api/channel/addOwner`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({
-      owner,
-      channel,
-    }).toString(),
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  const data: AddOwnerResponse = await response.json();
-  return data;
 }
 
 interface SafeChannel {
@@ -95,17 +65,13 @@ interface SafeChannel {
   createdAt: Date;
   scheduledFor: Date;
   status: string;
-  addresses: Array<{address: string, chain_id: string}>;
+  addresses: Array<{address: string, chainId: string}>;
   deployedAt: Date;
+  dashboardLink: string;
 }
 
 interface FindChannelResponse {
   safeChannel: SafeChannel;
-  message: string;
-  success: boolean;
-}
-
-interface AddOwnerResponse {
   message: string;
   success: boolean;
 }

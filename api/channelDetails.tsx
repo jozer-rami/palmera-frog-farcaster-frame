@@ -1,27 +1,20 @@
-import {getTimeUntilEvent} from "../utils/time.js";
-import {getShortAddress} from "../utils/address.js";
+import {getTimeUntilEvent} from "../utils/time";
+import {getShortAddress} from "../utils/address";
+import {chainIdToName} from "../utils/chains";
 
-
-const chainIdToName = function (chain_id: string): string {
-    const chainIdToNameDict: { [key: string]: string}   = {
-        '11155111': 'Sepolia',
-        '137': 'Polygon'
-    }
-    return chainIdToNameDict[chain_id]
-}
 
 export function getSafeChannelDataDetailsJSX(title: string, scheduledFor: Date, status: string, owners: number,
-                                             addresses?: Array<{address: string, chain_id:string}>,
+                                             addresses?: Array<{address: string, chainId:string}>,
                                              showOwners: boolean = false): any {
     const addressesJSX = [];
     if(addresses && addresses.length > 0){
         for (const address of addresses) {
             addressesJSX.push(
-                <p style={{
+                <p key={address?.address} style={{
                     color: 'black', fontSize: '32', backgroundColor: '#E3E2D5',
                     borderRadius: '4px', padding: '6px 12px', textAlign: 'center'
                 }}>
-                    {chainIdToName(address?.chain_id)}: {address ? getShortAddress(address?.address) : '...'}
+                    {chainIdToName(address?.chainId)}: {address ? getShortAddress(address?.address) : '...'}
                 </p>
             )
         }
