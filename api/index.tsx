@@ -1,6 +1,5 @@
 import { Button, Frog } from 'frog'
 import { handle } from 'frog/vercel'
-import { type NeynarVariables, neynar } from 'frog/middlewares'
 import { app as channelApp } from './channel';
 import { app as individualApp } from './individual';
 import * as dotenv from 'dotenv';
@@ -11,13 +10,6 @@ export const app = new Frog({
     assetsPath: '/',
     basePath: '/api'
 })
-
-app.use(
-    neynar({
-        apiKey: 'NEYNAR_FROG_FM',
-        features: ['interactor', 'cast'],
-    }),
-)
 
 app.frame('/', (c) => {
     // FLOW FOR CHANNEL
