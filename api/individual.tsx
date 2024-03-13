@@ -127,18 +127,18 @@ app.frame('/add_threshold', async (c) => {
         frameData,
         deriveState
     } = c;
-    if(frameData?.inputText && !isNaN(frameData?.inputText)){
+    if(frameData?.inputText && !isNaN(parseInt(frameData.inputText))){
         const state = deriveState(previousState => {
             if (frameData?.inputText) {
-                previousState.threshold = frameData?.inputText || previousState.threshold
+                previousState.threshold = parseInt(frameData.inputText) || previousState.threshold
             }
         })
-        const threshold = parseInt(state.threshold)
+        const threshold = state.threshold
         const validToSubmit = threshold && typeof threshold == 'number'
             && threshold <= state.addresses.length;
         if(validToSubmit){
             console.log(state)
-            const respCreate = await createSafe(state.initial_owner, state.addresses, state.threshold)
+            const respCreate = await createSafe(state.initial_owner!, state.addresses, state.threshold)
             if(respCreate.success){
                 return c.res({
                     image: getSafeIndividualSubmittedJSX(
@@ -229,7 +229,7 @@ app.frame('/check_individual', async (c) => {
     }
     else {
         return c.res({
-            image: getErrorJSX( `Error finding status of Safe deployment for owner: ${getShortAddress(address)}`),
+            image: getErrorJSX( `Error finding status of Safe deployment for owner: ${getShortAddress(address!)}`),
             intents:[
                 <Button.Reset> Home </Button.Reset>,
                 <Button.Link href={DOCUMENTATION_INDIVIDUAL_URL}> Docs </Button.Link>
