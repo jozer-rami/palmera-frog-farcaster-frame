@@ -54,7 +54,17 @@ app.frame('/check', async (c) => {
         }
         const respCheck = await findSafeChannel(channelName)
         //if channel found
+        let intents = [
+            <TextInput placeholder={state.channel || "Enter your channel..."}/>,
+            <Button action="/check"> Check </Button>,
+            <Button.Reset> Home </Button.Reset>,
+            <Button.Link href={DOCUMENTATION_URL}> Docs </Button.Link>,
+        ]
         if(respCheck?.success){
+            if (respCheck.safeChannel.status == 'deployed'){
+                console.log('adding button')
+                intents.push(<Button.Link href={respCheck.safeChannel.dashboardLink}>Explore</Button.Link>)
+            }
             return c.res({
                 image: getSafeChannelDataDetailsJSX(
                     `Safe for ${respCheck.safeChannel.channel} channel`,
@@ -64,15 +74,7 @@ app.frame('/check', async (c) => {
                     respCheck.safeChannel.addresses,
                     true
                 ),
-                intents:[
-                    <TextInput placeholder={state.channel || "Enter your channel..."}/>,
-                    <Button action="/check"> Check </Button>,
-                    <Button.Reset> Home </Button.Reset>,
-                    <Button.Link href={DOCUMENTATION_URL}> Docs </Button.Link>,
-                    <Button.Link href={respCheck.safeChannel.dashboardLink}>
-                        Explore
-                    </Button.Link>
-                ]
+                intents:intents
             })
         }
         else {
@@ -204,7 +206,7 @@ app.frame('/join', async (c) => {
 })
 
 app.frame('/create', async (c) => {
-    const { buttonValue,
+    let { buttonValue,
         frameData,
         deriveState
     } = c;
@@ -241,8 +243,9 @@ app.frame('/create', async (c) => {
             })
         }
         let deadline = parseInt(buttonValue) * 60;
-        if(deadline == 720)
+        if (deadline == 720){
             deadline = 1
+        }
         respCreate = await createSafeChannel(channelName, address || '', deadline)
         const respChannel = await findSafeChannel(channelName)
         //if creation was successful
@@ -256,6 +259,7 @@ app.frame('/create', async (c) => {
                     respChannel.safeChannel.addresses,
                 ),
                 intents:[
+                    <Button action="/check"> Recheck </Button>,
                     <Button.Reset> Home </Button.Reset>,
                     <Button.Link href={DOCUMENTATION_URL}> Docs </Button.Link>
                 ]

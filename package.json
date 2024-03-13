@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@neynar/nodejs-sdk": "^1.11.2",
+    "ethers": "^6.11.1",
     "frog": "latest",
     "hono": "^4",
     "moment": "^2.30.1"

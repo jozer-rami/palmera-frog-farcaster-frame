@@ -46,7 +46,7 @@ export function getSafeIndividualSubmittedJSX(title: string, addresses: Array<st
                     Signature threshold: {threshold}
                 </p>
                 <p style={{color: 'white', fontSize: '32'}}>
-                    Click on "check" to see the status of the deployments
+                    Click on "check" to see the status of the deployment
                 </p>
             </div>
         </div>
@@ -86,6 +86,11 @@ export function getSafeDataDetailsJSX(title: string, status: string, owners: num
             status == 'deployed' ?
                 <p style={{color: 'white', fontSize: '28px'}}>Click on "explore" to see your Safes</p> :
                 <spam></spam>
+        }
+        {
+            status == 'deploying' ?
+                (<p style={{color: 'white', fontSize: '28px'}}>Deploying could take up to 3 min...</p>) :
+                (<spam></spam>)
         }
 
     </div>)

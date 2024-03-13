@@ -27,7 +27,7 @@ export function getSafeChannelDataDetailsJSX(title: string, scheduledFor: Date, 
         { showOwners ? (<p style={{color: 'white', fontSize: '32px'}}>owner: {owners}</p>) : (<p></p>)}
         {status != 'deployed' ? <p style={{color: 'white', fontSize: '32px'}}>status: {status}</p> : <span></span>}
         {
-            status == 'scheduled' ?
+            status == 'scheduled'  ?
                 (<div style={{ display: 'flex', justifyContent: 'center',
                     textAlign: 'center', flexDirection: 'column'}}>
                     <p style={{color: 'white', fontSize: '32', textAlign: 'center', width:'100%'}}>
@@ -40,10 +40,23 @@ export function getSafeChannelDataDetailsJSX(title: string, scheduledFor: Date, 
                 </div>) :
                 (<div style={{ display: 'flex', justifyContent: 'center',
                     textAlign: 'center', flexDirection: 'column'}}>
-                    <p style={{color: 'white', fontSize: '20'}}>
-                        Deployed at: {scheduledFor} UTC
-                    </p>
+                    {
+                        status == 'deployed' ?
+                            (<p style={{color: 'white', fontSize: '20'}}>
+                                Deployed at: {scheduledFor} UTC
+                            </p>) : (<spam></spam>)
+                    }
                     {addressesJSX}
+                    {
+                        status == 'deployed' ?
+                            (<p style={{color: 'white', fontSize: '28px'}}>Click on "explore" to see the Safes</p>) :
+                            (<spam></spam>)
+                    }
+                    {
+                        status == 'deploying' ?
+                            (<p style={{color: 'white', fontSize: '28px'}}>This could take up to 3 min...</p>) :
+                            (<spam></spam>)
+                    }
 
                 </div>)
         }

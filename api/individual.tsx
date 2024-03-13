@@ -1,9 +1,10 @@
 import { Button, Frog, TextInput } from 'frog'
 import { handle } from 'frog/vercel'
+import { isAddress } from "ethers";
 import { type NeynarVariables, neynar } from 'frog/middlewares'
 import {createSafe, findSafe} from '../backend/individual';
 import {getAddress, getShortAddress} from "../utils/address";
-import {DOCUMENTATION_URL} from '../config';
+import {DOCUMENTATION_INDIVIDUAL_URL} from '../config';
 import {getSafeIndividualAddedAddressesJSX, getSafeIndividualSubmittedJSX,
     getSafeDataDetailsJSX} from '../components/safeIndividualDetails'
 import {getErrorJSX} from '../components/error';
@@ -35,10 +36,10 @@ app.use(
 )
 
 app.frame('/add_address', async (c) => {
-    console.log('add address')
     const {
         frameData,
-        deriveState
+        deriveState,
+        previousState
     } = c;
     const {successAddress, address} = await getAddress(frameData?.fid || 0)
     // if no valid address
@@ -49,18 +50,49 @@ app.frame('/add_address', async (c) => {
             ),
             intents: [
                 <Button.Reset> Home </Button.Reset>,
-                <Button.Link href={DOCUMENTATION_URL}> Docs </Button.Link>
+                <Button.Link href={DOCUMENTATION_INDIVIDUAL_URL}> Docs </Button.Link>
+            ]
+        })
+    }
+    const inputText = frameData?.inputText?.replace(/\s/g, '')
+    const correctAddress = isAddress(inputText)
+    if(inputText && !correctAddress){
+        console.log('here')
+        return c.res({
+            image: getErrorJSX(
+                `Wrongly formatted address: ${inputText}`
+            ),
+            intents: [
+                <Button action="/add_address"> Back </Button>,
+                <Button.Reset> Restart </Button.Reset>,
+                <Button.Link href={DOCUMENTATION_INDIVIDUAL_URL}> Docs </Button.Link>
+            ]
+        })
+
+    }
+    if(inputText && previousState?.addresses.indexOf(inputText) != -1){
+        return c.res({
+            image: getErrorJSX(
+                `Address: ${getShortAddress(inputText)} has already been added`
+            ),
+            intents: [
+                <Button action="/add_address"> Back </Button>,
+                <Button.Reset> Restart </Button.Reset>,
+                <Button.Link href={DOCUMENTATION_INDIVIDUAL_URL}> Docs </Button.Link>
             ]
         })
     }
     const state = deriveState(previousState => {
-        if (frameData?.inputText) {
-            const inputText = frameData?.inputText.replace(/\s/g, '')
-            previousState.addresses = [inputText, ...previousState.addresses]
-            previousState.initial_owner = address
+        if(inputText && correctAddress){
+            if(previousState.addresses.indexOf(inputText) == -1){
+                previousState.addresses = [inputText, ...previousState.addresses]
+            }
         }
+        previousState.initial_owner = address
     })
-    if(state.addresses?.length>0){
+
+
+    if(state?.addresses?.length>0){
         return c.res({
             image: getSafeIndividualAddedAddressesJSX(
                 'You have added the following addresses',
@@ -84,6 +116,7 @@ app.frame('/add_address', async (c) => {
             <TextInput placeholder={"Enter your address..."} />,
             <Button action="/add_address"> Add </Button>,
             <Button.Reset> Restart </Button.Reset>,
+            <Button.Link href={DOCUMENTATION_INDIVIDUAL_URL}> Docs </Button.Link>
         ],
         title: 'Create the Safe for your channel'
     })
@@ -168,13 +201,22 @@ app.frame('/check_individual', async (c) => {
             ),
             intents: [
                 <Button.Reset> Home </Button.Reset>,
-                <Button.Link href={DOCUMENTATION_URL}> Docs </Button.Link>
+                <Button.Link href={DOCUMENTATION_INDIVIDUAL_URL}> Docs </Button.Link>
             ]
         })
     }
     const respCheck = await findSafe(address || '')
     //if safe found
+    const intents = [
+        <Button action="/check_individual"> Recheck </Button>,
+        <Button.Reset> Home </Button.Reset>,
+        <Button.Link href={DOCUMENTATION_INDIVIDUAL_URL}> Docs </Button.Link>
+    ]
     if(respCheck?.success){
+        if (respCheck.safeChannel.status == 'deployed'){
+            console.log('adding button')
+            intents.push(<Button.Link href={respCheck.safeChannel.dashboardLink}>Explore</Button.Link>)
+        }
         return c.res({
             image: getSafeDataDetailsJSX(
                 `Safe for validated address: ${getShortAddress(respCheck.safeChannel.initialOwner)}`,
@@ -182,14 +224,7 @@ app.frame('/check_individual', async (c) => {
                 respCheck.safeChannel.owners.length,
                 respCheck.safeChannel.addresses
             ),
-            intents:[
-                <Button action="/check_individual"> Recheck </Button>,
-                <Button.Reset> Home </Button.Reset>,
-                <Button.Link href={DOCUMENTATION_URL}> Docs </Button.Link>,
-                <Button.Link href={respCheck.safeChannel.dashboardLink}>
-                    Explore
-                </Button.Link>
-            ]
+            intents:intents
         })
     }
     else {
@@ -197,7 +232,7 @@ app.frame('/check_individual', async (c) => {
             image: getErrorJSX( `Error finding status of Safe deployment for owner: ${getShortAddress(address)}`),
             intents:[
                 <Button.Reset> Home </Button.Reset>,
-                <Button.Link href={DOCUMENTATION_URL}> Docs </Button.Link>
+                <Button.Link href={DOCUMENTATION_INDIVIDUAL_URL}> Docs </Button.Link>
             ]
         })
     }

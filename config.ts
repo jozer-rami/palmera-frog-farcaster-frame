@@ -7,3 +7,7 @@ export const BACKEND_PUBLIC_URL = "http://localhost:8080";
 
 export const DOCUMENTATION_URL = "https://blog.palmeradao.xyz/palmera-safe-frame-18f4f40aa67b"
 
+export const DOCUMENTATION_INDIVIDUAL_URL = "https://blog.palmeradao.xyz/create-new-safes-with-palmeras-frame-in-warpcast-989ec9322561"
+
+
+
