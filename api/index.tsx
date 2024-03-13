@@ -1,7 +1,7 @@
 import { Button, Frog } from 'frog'
 import { handle } from 'frog/vercel'
-import { app as channelApp } from './channel';
-import { app as individualApp } from './individual';
+import { app as channelApp } from './channel.js';
+import { app as individualApp } from './individual.js';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
