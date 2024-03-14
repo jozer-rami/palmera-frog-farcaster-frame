@@ -109,7 +109,7 @@ app.frame('/add_address', async (c) => {
     return c.res({
         image: (
             <div style={{ display: 'flex'}}>
-                <img src="https://storage.googleapis.com/farcaster-keyper-dev/Palmera_Frame_new_create_safe_details.jpg"/>
+                <img src="https://storage.googleapis.com/farcaster-keyper-dev/Palmera_Frame_nueva%201.jpg"/>
             </div>
         ),
         intents:[
@@ -179,7 +179,7 @@ app.frame('/add_threshold', async (c) => {
     return c.res({
         image: (
             <div style={{ display: 'flex'}}>
-                <img src="https://storage.googleapis.com/farcaster-keyper-dev/Palmera_Frame_new_config_threshold.jpg"/>
+                <img src="https://storage.googleapis.com/farcaster-keyper-dev/Palmera_Frame_%20nueva%202.jpg"/>
             </div>
         ),
         intents:[
